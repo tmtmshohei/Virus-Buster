@@ -51,16 +51,16 @@ public class PlayerMove : MonoBehaviour {
         //Yの+の方向のMaxが0.5ぐらい(デバイスの不具合かも？)なので増やす
   
 
-        if (primaryTouchpad.y > 0.5 && -0.5 < primaryTouchpad.x && primaryTouchpad.x < 0.5)
+        if (OVRInput.Get(OVRInput.Button.Up)/*primaryTouchpad.y > 0.0 && -0.5 < primaryTouchpad.x && primaryTouchpad.x < 0.5*/)
         {
             //向いてる方向、タッチパッドを触ってる場所から速度計算
-            _currentVelocity = _centerEyeAnchor.rotation * new Vector3(primaryTouchpad.x, 0, primaryTouchpad.y);
+            _currentVelocity = _centerEyeAnchor.rotation *new Vector3(0.5f,0,0.5f) /*new Vector3(primaryTouchpad.x, 0, primaryTouchpad.y)*/;
 
             //上向いてる時に上にいっちゃうので上下方向の速度0に
             _currentVelocity.y = 0;
 
             //上下方向の速度を減らした分を左右に振るために正規化
-            float speedMagnitude = _moveSpeed * primaryTouchpad.magnitude;//速度の大きさ
+            float speedMagnitude = _moveSpeed /** primaryTouchpad.magnitude*/;//速度の大きさ
             _currentVelocity = _currentVelocity.normalized * speedMagnitude;
         }
 
