@@ -51,22 +51,30 @@ public class PlayerMove : MonoBehaviour {
         //Yの+の方向のMaxが0.5ぐらい(デバイスの不具合かも？)なので増やす
   
 
-        if (OVRInput.Get(OVRInput.Button.Up)/*primaryTouchpad.y > 0.0 && -0.5 < primaryTouchpad.x && primaryTouchpad.x < 0.5*/)
-        {
-            //向いてる方向、タッチパッドを触ってる場所から速度計算
-            _currentVelocity = _centerEyeAnchor.rotation *new Vector3(0.5f,0,0.5f) /*new Vector3(primaryTouchpad.x, 0, primaryTouchpad.y)*/;
+       
+            if(primaryTouchpad.y > 0.0 && -0.3 < primaryTouchpad.x && primaryTouchpad.x < 0.3)
+            {
+                //向いてる方向、タッチパッドを触ってる場所から速度計算
+                _currentVelocity = _centerEyeAnchor.rotation * new Vector3(primaryTouchpad.x, 0, primaryTouchpad.y);
 
-            //上向いてる時に上にいっちゃうので上下方向の速度0に
-            _currentVelocity.y = 0;
+                //上向いてる時に上にいっちゃうので上下方向の速度0に
+                _currentVelocity.y = 0;
 
-            //上下方向の速度を減らした分を左右に振るために正規化
-            float speedMagnitude = _moveSpeed /** primaryTouchpad.magnitude*/;//速度の大きさ
-            _currentVelocity = _currentVelocity.normalized * speedMagnitude;
-        }
+                //上下方向の速度を減らした分を左右に振るために正規化
+                float speedMagnitude = _moveSpeed * primaryTouchpad.magnitude;//速度の大きさ
+                _currentVelocity = _currentVelocity.normalized * speedMagnitude;
+            }
+
+            else
+            {
+                _currentVelocity =Vector3.zero;
+            }
+        
+
 
         //物理演算関係(今回は速度)はFixedUpdateで設定
 
-        }
+     }
     private void FixedUpdate()
     {
         _rigidbody.velocity = _currentVelocity;
@@ -74,3 +82,5 @@ public class PlayerMove : MonoBehaviour {
     }
        
 }
+
+//xの範囲を狭めて下ボタンを触っている間速度を0にする処理の追加をする

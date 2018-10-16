@@ -12,6 +12,11 @@ public class AgentMove : MonoBehaviour
     private GameObject neargate;
     private bool dataarrived;
     private bool gatearrived;
+    private float data;
+    private float gate;
+    private float far2data;
+    private float far2gate;
+    public float dist;
 
     public GameObject FindClosestData()
     {
@@ -63,8 +68,11 @@ public class AgentMove : MonoBehaviour
         dataarrived = false;
         gatearrived = false;
         neardata = FindClosestData();
-        neargate = FindClosestGate();
-        agent.destination = neardata.transform.position;
+        //neargate = FindClosestGate();
+        //agent.destination = neardata.transform.position;
+        agent.SetDestination(neardata.transform.position);
+
+        //data = agent.destination;
 
 
 
@@ -74,15 +82,23 @@ public class AgentMove : MonoBehaviour
 	void Update () 
     {
 
+        far2data = Dist(agent);
 
-
-        if(agent.remainingDistance<2.0f)
+        if(far2data<7.0f)
         {
-            agent.ResetPath();
+            //Debug.Log(far2data);
+            //agent.ResetPath();
             neargate = FindClosestGate();
-            agent.SetDestination(neargate.transform.position);
-
+            agent.ResetPath();
+            dataarrived = true;
+            //Debug.Log("true");
+            //agent.destination=neargate.transform.position;
+            
         }
+
+        Gotogate();
+
+
 
 
         /*
@@ -112,4 +128,41 @@ public class AgentMove : MonoBehaviour
         */
 
 	}
+
+    public float Dist(NavMeshAgent target)
+    {
+        NavMeshPath path = target.path;
+        dist = 0.0f;
+        Vector3 now = transform.position;
+        for (int i = 0; i < path.corners.Length;i++)
+        {
+            Vector3 conrner1 = path.corners[i];
+            dist += Vector3.Distance(now,conrner1);
+            now = conrner1;
+
+        }
+        return dist;
+
+    }
+
+    void Gotogate()
+    {
+        if (dataarrived == true)
+        {
+            agent.SetDestination(neargate.transform.position);
+            far2gate = Dist(agent);
+            //Debug.Log(far2gate);
+
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag=="Gate")
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+    }
+
 }

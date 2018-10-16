@@ -9,6 +9,54 @@ public class test : MonoBehaviour
     private NavMeshAgent agent;
     private GameObject neardata;
     private GameObject neargate;
+    public float dist;
+    public bool hoge;
+    NavMeshPath path1;
+
+	// Use this for initialization
+	void Start ()
+    {
+        agent = GetComponent<NavMeshAgent>();
+        neardata = FindClosestData();
+        agent.destination = neardata.transform.position;
+        hoge = false;
+        path1 = new NavMeshPath();
+	}
+
+	void Update () 
+    {
+        /*if (Input.GetKey("up") && this.gameObject.tag == "enemy")
+        {
+            //Destroy(this.gameObject);
+            gameObject.SetActive(false);
+            return;
+        }*/
+        
+        if (Dist(agent,neardata)<2.0f && hoge==false)
+        {
+            Debug.Log("a");
+            //gameObject.SetActive(false);
+            //Destroy(this.gameObject);
+            agent.ResetPath();
+            hoge = true;
+
+            //neargate = FindClosestGate();
+            //agent.SetDestination(neargate.transform.position);
+
+        }
+        if (hoge == true)
+        {
+            //Set(agent);
+            neargate = FindClosestGate();
+            agent.destination = neargate.transform.position;
+            //Debug.Log(agent.destination);
+        }
+
+
+
+	}
+
+
 
     public GameObject FindClosestData()
     {
@@ -50,33 +98,43 @@ public class test : MonoBehaviour
         return closestgate;
     }
 
+    public float Dist(NavMeshAgent target ,GameObject obj)
+    {
+        
+        target.destination = obj.transform.position;
+        NavMeshPath path = target.path;
 
-	// Use this for initialization
-	void Start ()
-    {
-        agent = GetComponent<NavMeshAgent>();
-        neardata = FindClosestData();
-        neargate = FindClosestGate();
-        agent.destination = neardata.transform.position;
-        
-		
-	}
-	
-	// Update is called once per frame
-	void Update () 
-    {
-        
-        if (agent.remainingDistance<1.0f)
+        dist = 0.0f;
+        Vector3 now = transform.position;
+        for (int i = 0; i < path.corners.Length; i++)
         {
-            Debug.Log("a");
-            agent.ResetPath();
-            neargate = FindClosestGate();
-            agent.SetDestination(neargate.transform.position);
-
-
-
+            Vector3 conrner1 = path.corners[i];
+            dist += Vector3.Distance(now, conrner1);
+            now = conrner1;
         }
+        return dist;
+    }
+
+    public void Set(NavMeshAgent target)
+    {
+        
+        neargate = FindClosestGate();
+        NavMesh.CalculatePath(gameObject.transform.position, neargate.transform.position, NavMesh.AllAreas, path1);
+        target.destination = neargate.transform.position;
+        target.SetPath(path1);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        //GameObject a = GameObject.FindWithTag("GATE");
+        if(collision.gameObject.tag=="Gate")
+        {
+            Debug.Log("hit");
+            gameObject.SetActive(false);
+        }
+    }
 
 
-	}
+
+
 }
