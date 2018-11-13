@@ -8,6 +8,11 @@ TagManager:
   - enemy
   - data
   - Gate
+  - Button
+  - Sound
+  - UI
+  - HPr
+  - HPy
   layers:
   - Default
   - TransparentFX
@@ -19,8 +24,8 @@ TagManager:
   - 
   - Lighting
   - Enemy
-  - 
-  - 
+  - Data
+  - Gate
   - 
   - 
   - 
